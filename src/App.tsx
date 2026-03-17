@@ -1,41 +1,57 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
+import {
+  CloudUpload,
+  Catalog,
+  Share,
+  Security,
+  DataBase,
+  Locked,
+  CheckmarkFilled,
+  ArrowRight,
+  Collaborate,
+  DocumentSecurity,
+  Analytics,
+  Car,
+  Home as HomeIcon,
+  HealthCross,
+  FingerprintRecognition,
+} from '@carbon/icons-react';
+
+// ── Design tokens (matches v2) ──
+const CORAL = '#E8614D';
+const TEAL = '#1B7B6F';
+const GOLDEN = '#E5A838';
+const BG = '#FAFAF8';
+const TEXT = '#1A1A1A';
 
 const SUPABASE_URL = 'https://styjrgioxihcilpjffhp.supabase.co';
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-function App() {
+// ── Animation presets ──
+const fadeUp = {
+  hidden: { opacity: 0, y: 32 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' as const } },
+};
+
+const stagger = {
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
+// ── Waitlist Form ──
+function WaitlistForm({ variant = 'dark' }: { variant?: 'dark' | 'light' }) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
-  const [waitlistCount, setWaitlistCount] = useState<number | null>(null);
-
-  useEffect(() => {
-    // Fetch waitlist count
-    fetch(`${SUPABASE_URL}/rest/v1/waitlist?select=id`, {
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        Prefer: 'count=exact',
-      },
-    })
-      .then((res) => {
-        const count = res.headers.get('content-range');
-        if (count) {
-          const total = count.split('/')[1];
-          if (total && total !== '*') setWaitlistCount(parseInt(total));
-        }
-      })
-      .catch(() => {});
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-
     setStatus('loading');
     setErrorMsg('');
 
     try {
+      const params = new URLSearchParams(window.location.search);
       const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
         method: 'POST',
         headers: {
@@ -46,23 +62,20 @@ function App() {
         },
         body: JSON.stringify({
           email: email.toLowerCase().trim(),
-          source: new URLSearchParams(window.location.search).get('utm_source') || 'direct',
-          utm_medium: new URLSearchParams(window.location.search).get('utm_medium') || null,
-          utm_campaign: new URLSearchParams(window.location.search).get('utm_campaign') || null,
+          source: params.get('utm_source') || 'direct',
+          utm_medium: params.get('utm_medium') || null,
+          utm_campaign: params.get('utm_campaign') || null,
         }),
       });
 
       if (res.ok) {
         setStatus('success');
-        // Track conversion events
-        if (typeof window !== 'undefined') {
-          // @ts-expect-error Meta Pixel
-          window.fbq?.('track', 'Lead');
-          // @ts-expect-error Google
-          window.gtag?.('event', 'sign_up', { method: 'waitlist' });
-          // @ts-expect-error TikTok
-          window.ttq?.track?.('SubmitForm');
-        }
+        // @ts-expect-error Meta Pixel
+        window.fbq?.('track', 'Lead');
+        // @ts-expect-error Google
+        window.gtag?.('event', 'sign_up', { method: 'waitlist' });
+        // @ts-expect-error TikTok
+        window.ttq?.track?.('SubmitForm');
       } else if (res.status === 409) {
         setStatus('error');
         setErrorMsg('Du er allerede på listen! 🎉');
@@ -75,281 +88,561 @@ function App() {
     }
   };
 
+  if (status === 'success') {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="rounded-2xl p-8 text-center"
+        style={{
+          backgroundColor: variant === 'dark' ? 'rgba(27,123,111,0.15)' : `${TEAL}10`,
+          border: `1px solid ${variant === 'dark' ? 'rgba(27,123,111,0.3)' : `${TEAL}30`}`,
+        }}
+      >
+        <CheckmarkFilled size={32} style={{ color: TEAL }} className="mx-auto mb-3" />
+        <h3
+          className="text-xl font-bold mb-2"
+          style={{ fontFamily: "'Playfair Display', serif", color: variant === 'dark' ? '#fff' : TEXT }}
+        >
+          Du er på listen!
+        </h3>
+        <p style={{ color: variant === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(26,26,26,0.6)' }} className="text-sm">
+          Vi gir deg beskjed når Levd er klar. Takk for tilliten.
+        </p>
+      </motion.div>
+    );
+  }
+
+  const isDark = variant === 'dark';
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="hero-gradient min-h-screen flex flex-col relative overflow-hidden">
-        {/* Nav */}
-        <nav className="flex items-center justify-between px-6 md:px-12 py-6 relative z-10">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-purple-500 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">L</span>
-            </div>
-            <span className="text-white font-display text-xl font-semibold">Levd</span>
-          </div>
-          <a
-            href="#signup"
-            className="text-sm text-teal-300 hover:text-teal-200 transition-colors font-medium"
-          >
-            Få tidlig tilgang →
-          </a>
-        </nav>
-
-        {/* Hero Content */}
-        <div className="flex-1 flex items-center justify-center px-6 md:px-12 relative z-10">
-          <div className="max-w-3xl text-center">
-            <div className="animate-fade-in-up">
-              <span className="inline-block px-4 py-1.5 rounded-full bg-teal-500/20 text-teal-300 text-sm font-medium mb-6 border border-teal-500/30">
-                🚀 Snart lansering — Få tidlig tilgang
-              </span>
-            </div>
-
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-white leading-tight mb-6 animate-fade-in-up">
-              Alt du eier.{' '}
-              <br className="hidden md:block" />
-              Alt du er.{' '}
-              <span className="gradient-text">Ett sted.</span>
-            </h1>
-
-            <p className="text-lg md:text-xl text-navy-200 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up-delay">
-              Levd samler dokumenter, eiendeler, helse og familiedata på ett trygt,
-              kryptert sted — med AI som hjelper deg holde oversikten.
-            </p>
-
-            {/* CTA Form */}
-            <div id="signup" className="animate-fade-in-up-delay-2">
-              {status === 'success' ? (
-                <div className="bg-teal-500/20 border border-teal-500/40 rounded-2xl p-8 max-w-md mx-auto">
-                  <div className="text-4xl mb-3">✅</div>
-                  <h3 className="text-white font-display text-xl mb-2">Du er på listen!</h3>
-                  <p className="text-navy-200 text-sm">
-                    Vi gir deg beskjed så snart Levd er klar. Takk for tilliten.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                  <input
-                    type="email"
-                    placeholder="din@epost.no"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="flex-1 px-5 py-3.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-400/30 transition-all text-base"
-                  />
-                  <button
-                    type="submit"
-                    disabled={status === 'loading'}
-                    className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-teal-500 to-teal-400 text-navy-900 font-semibold hover:from-teal-400 hover:to-teal-300 transition-all disabled:opacity-60 animate-pulse-glow whitespace-nowrap text-base"
-                  >
-                    {status === 'loading' ? 'Sender...' : 'Få tidlig tilgang'}
-                  </button>
-                </form>
-              )}
-              {status === 'error' && (
-                <p className="text-red-400 text-sm mt-3">{errorMsg}</p>
-              )}
-              {waitlistCount !== null && waitlistCount > 10 && status !== 'success' && (
-                <p className="text-navy-300 text-xs mt-4">
-                  🔥 {waitlistCount}+ har allerede registrert seg
-                </p>
-              )}
-              <p className="text-navy-400 text-xs mt-4">
-                Gratis. Ingen spam. Avmeld når som helst.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Decorative elements */}
-        <div className="absolute top-20 right-10 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-20 left-10 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-
-        {/* Scroll indicator */}
-        <div className="pb-8 flex justify-center relative z-10">
-          <div className="animate-bounce text-navy-400">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
-            </svg>
-          </div>
-        </div>
-      </section>
-
-      {/* Problem Section */}
-      <section className="py-20 md:py-28 px-6 md:px-12 bg-gray-50">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="font-display text-3xl md:text-4xl text-navy-800 mb-6">
-            Kjennes dette kjent?
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6 mt-12">
-            {[
-              {
-                emoji: '📂',
-                title: 'Dokumentkaos',
-                desc: 'Forsikringsbrev i e-posten, skjøte i en skuff, bilpapirer... et sted.',
-              },
-              {
-                emoji: '🏠',
-                title: 'Ingen oversikt',
-                desc: 'Hva er huset verdt? Når gikk servicen på bilen ut? Hva dekker forsikringen?',
-              },
-              {
-                emoji: '👨‍👩‍👧‍👦',
-                title: 'Familien vet ikke',
-                desc: 'Hva skjer om noe skjer deg? Har familien tilgang til det de trenger?',
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-2xl p-8 shadow-sm card-hover border border-gray-100"
-              >
-                <div className="text-4xl mb-4">{item.emoji}</div>
-                <h3 className="font-display text-lg text-navy-800 mb-2">{item.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Solution Section */}
-      <section className="py-20 md:py-28 px-6 md:px-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="font-display text-3xl md:text-4xl text-navy-800 mb-4">
-              Levd gir deg kontroll
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Ett trygt sted for alt som betyr noe — med AI som gjør det enkelt.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {[
-              {
-                icon: '🔐',
-                title: 'Kryptert dokumenthvelv',
-                desc: 'Last opp dokumenter med klient-side kryptering (AES-256). Bare du har nøkkelen.',
-              },
-              {
-                icon: '🚗',
-                title: 'Eiendeler samlet',
-                desc: 'Bil, båt, bolig — alt med historikk, dokumenter og automatisk verdi-oppdatering.',
-              },
-              {
-                icon: '🤖',
-                title: 'AI som forstår livet ditt',
-                desc: 'Last opp et dokument — Levd leser, sorterer og kobler det til rett eiendel automatisk.',
-              },
-              {
-                icon: '👨‍👩‍👧',
-                title: 'Trygg familiedeling',
-                desc: 'Del utvalgte dokumenter og oversikt med familien — på dine premisser.',
-              },
-              {
-                icon: '📊',
-                title: 'Livsindeks',
-                desc: 'Se hele livet ditt i ett dashboard — økonomi, helse, eiendeler og dokumenter.',
-              },
-              {
-                icon: '🇳🇴',
-                title: 'Bygget for Norge',
-                desc: 'Vegvesen-oppslag, norske dokumenttyper, og snart BankID-innlogging.',
-              },
-            ].map((item, i) => (
-              <div key={i} className="flex gap-4 p-6 rounded-xl hover:bg-gray-50 transition-colors">
-                <div className="text-3xl flex-shrink-0">{item.icon}</div>
-                <div>
-                  <h3 className="font-semibold text-navy-800 mb-1">{item.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof / Trust */}
-      <section className="py-16 px-6 md:px-12 bg-navy-800">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="font-display text-2xl md:text-3xl text-white mb-4">
-            Bygget med omtanke
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-10">
-            {[
-              { value: 'AES-256', label: 'Kryptering' },
-              { value: 'EU', label: 'Data lagret i EU' },
-              { value: 'AI', label: 'Smart sortering' },
-              { value: '100%', label: 'Norsk' },
-            ].map((item, i) => (
-              <div key={i}>
-                <div className="text-2xl md:text-3xl font-bold gradient-text">{item.value}</div>
-                <div className="text-navy-300 text-sm mt-1">{item.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-20 md:py-28 px-6 md:px-12">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-display text-3xl md:text-4xl text-navy-800 mb-4">
-            Vær blant de første
-          </h2>
-          <p className="text-gray-600 mb-10">
-            Få tidlig tilgang til Levd og vær med på å forme fremtidens livsplattform.
-            Helt gratis i beta-perioden.
-          </p>
-
-          {status === 'success' ? (
-            <div className="bg-teal-50 border border-teal-200 rounded-2xl p-8">
-              <div className="text-4xl mb-3">🎉</div>
-              <h3 className="font-display text-xl text-navy-800 mb-2">Du er allerede på listen!</h3>
-              <p className="text-gray-600 text-sm">Vi gleder oss til å ha deg med.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="din@epost.no"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="flex-1 px-5 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-base"
-              />
-              <button
-                type="submit"
-                disabled={status === 'loading'}
-                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-navy-700 to-navy-800 text-white font-semibold hover:from-navy-600 hover:to-navy-700 transition-all disabled:opacity-60 whitespace-nowrap text-base"
-              >
-                {status === 'loading' ? 'Sender...' : 'Registrer deg'}
-              </button>
-            </form>
-          )}
-          {status === 'error' && (
-            <p className="text-red-500 text-sm mt-3">{errorMsg}</p>
-          )}
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-8 px-6 border-t border-gray-100">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-teal-400 to-purple-500 flex items-center justify-center">
-              <span className="text-white font-bold text-xs">L</span>
-            </div>
-            <span className="text-gray-600 text-sm">Levd © {new Date().getFullYear()}</span>
-          </div>
-          <div className="flex gap-6 text-sm text-gray-500">
-            <a href="mailto:hei@levd.ai" className="hover:text-navy-700 transition-colors">
-              Kontakt oss
-            </a>
-          </div>
-        </div>
-      </footer>
+    <div>
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+        <input
+          type="email"
+          placeholder="din@epost.no"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="flex-1 px-5 py-3.5 rounded-xl text-base outline-none transition-all"
+          style={{
+            backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#fff',
+            border: `1px solid ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}`,
+            color: isDark ? '#fff' : TEXT,
+          }}
+        />
+        <button
+          type="submit"
+          disabled={status === 'loading'}
+          className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-base font-semibold transition-transform hover:scale-[1.03] disabled:opacity-60 whitespace-nowrap"
+          style={{ backgroundColor: CORAL, color: '#fff' }}
+        >
+          {status === 'loading' ? 'Sender...' : 'Få tidlig tilgang'}
+          {status !== 'loading' && <ArrowRight size={18} />}
+        </button>
+      </form>
+      {status === 'error' && (
+        <p className="text-sm mt-3" style={{ color: CORAL }}>{errorMsg}</p>
+      )}
+      <p className="text-xs mt-4" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(26,26,26,0.4)' }}>
+        Gratis. Ingen spam. Avmeld når som helst.
+      </p>
     </div>
   );
 }
 
-export default App;
+// ── Navbar ──
+function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      style={{
+        backgroundColor: scrolled ? 'rgba(250,250,248,0.85)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(16px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(0,0,0,0.06)' : '1px solid transparent',
+      }}
+    >
+      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+        <span
+          className="text-2xl font-bold tracking-tight"
+          style={{ fontFamily: "'Playfair Display', serif", color: TEXT }}
+        >
+          Levd
+        </span>
+        <a
+          href="#signup"
+          className="px-5 py-2 rounded-xl text-sm font-medium transition-transform hover:scale-[1.03]"
+          style={{ backgroundColor: TEXT, color: BG }}
+        >
+          Få tidlig tilgang
+        </a>
+      </div>
+    </nav>
+  );
+}
+
+// ── Hero ──
+function Hero() {
+  return (
+    <section className="relative min-h-screen flex items-center overflow-hidden" style={{ backgroundColor: BG }}>
+      {/* Decorative shapes */}
+      <motion.div
+        className="absolute -right-20 top-1/4 w-[420px] h-[420px] rounded-[3rem] hidden lg:block"
+        style={{ backgroundColor: CORAL }}
+        initial={{ opacity: 0, x: 80, rotate: -8 }}
+        animate={{ opacity: 0.9, x: 0, rotate: -6 }}
+        transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
+      />
+      <motion.div
+        className="absolute right-32 top-[38%] w-[200px] h-[200px] rounded-[2rem] hidden lg:block"
+        style={{ backgroundColor: GOLDEN, opacity: 0.7 }}
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 0.7, y: 0 }}
+        transition={{ duration: 1, ease: 'easeOut', delay: 0.6 }}
+      />
+      <motion.div
+        className="absolute right-16 top-[22%] w-[120px] h-[120px] rounded-[1.5rem] hidden lg:block"
+        style={{ backgroundColor: TEAL, opacity: 0.6 }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 0.6, scale: 1 }}
+        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.8 }}
+      />
+
+      <div className="max-w-6xl mx-auto px-6 pt-24 pb-16 relative z-10">
+        <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-2xl">
+          <motion.div variants={fadeUp}>
+            <span
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-8"
+              style={{ backgroundColor: `${CORAL}15`, color: CORAL, border: `1px solid ${CORAL}30` }}
+            >
+              🚀 Snart lansering
+            </span>
+          </motion.div>
+
+          <motion.h1
+            variants={fadeUp}
+            className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.08] tracking-tight"
+            style={{ fontFamily: "'Playfair Display', serif", color: TEXT }}
+          >
+            Alt du eier.
+          </motion.h1>
+          <motion.p
+            variants={fadeUp}
+            className="text-4xl sm:text-5xl md:text-6xl font-bold mt-2 leading-tight"
+            style={{ fontFamily: "'Playfair Display', serif", color: CORAL }}
+          >
+            Alt du er.
+          </motion.p>
+          <motion.p
+            variants={fadeUp}
+            className="text-3xl sm:text-4xl md:text-5xl font-bold mt-2 leading-tight"
+            style={{ fontFamily: "'Playfair Display', serif", color: TEAL }}
+          >
+            Ett sted.
+          </motion.p>
+
+          <motion.p
+            variants={fadeUp}
+            className="mt-8 text-lg leading-relaxed max-w-md"
+            style={{ color: 'rgba(26,26,26,0.7)' }}
+          >
+            Levd samler dokumenter, eiendeler og familiedata på ett trygt, kryptert sted. Med AI som gjør det enkelt.
+          </motion.p>
+
+          <motion.div variants={fadeUp} className="mt-10 max-w-md" id="signup">
+            <WaitlistForm variant="light" />
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ── Problem ──
+const PROBLEMS = [
+  'Hvor har vi forsikret huset?',
+  'Hvor ligger bilpapirene?',
+  'Når gikk servicen ut?',
+  'Hva dekker forsikringen egentlig?',
+  'Hvor la vi kjøpekontrakten?',
+  'Har familien tilgang om noe skjer?',
+];
+
+function Problem() {
+  return (
+    <section className="py-24 md:py-32" style={{ backgroundColor: '#F4F3EF' }}>
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.h2
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          className="text-3xl sm:text-4xl font-bold text-center mb-16"
+          style={{ fontFamily: "'Playfair Display', serif", color: TEXT }}
+        >
+          Kjenner du igjen dette?
+        </motion.h2>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={stagger}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
+          {PROBLEMS.map((q) => (
+            <motion.div
+              key={q}
+              variants={fadeUp}
+              className="rounded-2xl p-6 border transition-shadow hover:shadow-md cursor-default"
+              style={{ backgroundColor: '#fff', borderColor: 'rgba(0,0,0,0.06)' }}
+            >
+              <p className="text-lg font-medium italic leading-snug" style={{ color: TEXT }}>
+                «{q}»
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ── How it works ──
+const STEPS = [
+  {
+    icon: CloudUpload,
+    title: 'Last opp',
+    desc: 'Dra inn dokumenter, bilder og filer. AI leser, sorterer og kobler alt automatisk.',
+    color: CORAL,
+  },
+  {
+    icon: Catalog,
+    title: 'Få oversikt',
+    desc: 'Bil, båt, bolig, helse og mer. Alt samlet med historikk og dokumenter.',
+    color: TEAL,
+  },
+  {
+    icon: Share,
+    title: 'Del trygt',
+    desc: 'Gi familien tilgang til det som betyr noe. På dine premisser.',
+    color: GOLDEN,
+  },
+];
+
+function HowItWorks() {
+  return (
+    <section className="py-24 md:py-32" style={{ backgroundColor: BG }}>
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.h2
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          className="text-3xl sm:text-4xl font-bold text-center mb-4"
+          style={{ fontFamily: "'Playfair Display', serif", color: TEXT }}
+        >
+          Slik fungerer det
+        </motion.h2>
+        <motion.p
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          className="text-center text-lg mb-16 max-w-md mx-auto"
+          style={{ color: 'rgba(26,26,26,0.6)' }}
+        >
+          Tre enkle steg til full kontroll.
+        </motion.p>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={stagger}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
+          {STEPS.map((s) => (
+            <motion.div key={s.title} variants={fadeUp} className="text-center">
+              <div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5"
+                style={{ backgroundColor: s.color }}
+              >
+                <s.icon size={28} className="text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2" style={{ color: TEXT }}>
+                {s.title}
+              </h3>
+              <p className="text-base leading-relaxed max-w-xs mx-auto" style={{ color: 'rgba(26,26,26,0.65)' }}>
+                {s.desc}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ── Features ──
+const FEATURES = [
+  {
+    icon: DocumentSecurity,
+    title: 'Kryptert dokumenthvelv',
+    desc: 'AES-256 kryptering på klientsiden. Bare du har nøkkelen. Vi kan ikke lese filene dine.',
+    color: TEAL,
+  },
+  {
+    icon: Car,
+    title: 'Kjøretøy og eiendeler',
+    desc: 'Slå opp bilen direkte fra Vegvesenet. Båt, hus, hytte. Alt med dokumenter og historikk.',
+    color: CORAL,
+  },
+  {
+    icon: Analytics,
+    title: 'AI som forstår',
+    desc: 'Last opp et dokument. Levd leser det, kategoriserer det og kobler det til rett eiendel.',
+    color: GOLDEN,
+  },
+  {
+    icon: Collaborate,
+    title: 'Familiedeling',
+    desc: 'Del utvalgte dokumenter med familien. Alle ser det de trenger, ingenting mer.',
+    color: TEAL,
+  },
+  {
+    icon: HomeIcon,
+    title: 'Bolig og eiendom',
+    desc: 'Samle alt om boligen. Forsikring, oppussing, takst, kontrakter. Ett sted.',
+    color: CORAL,
+  },
+  {
+    icon: HealthCross,
+    title: 'Helse og personlig',
+    desc: 'Helsejournal, vaksinasjoner, resepter. Alltid tilgjengelig når du trenger det.',
+    color: GOLDEN,
+  },
+];
+
+function Features() {
+  return (
+    <section className="py-24 md:py-32" style={{ backgroundColor: TEAL }}>
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.h2
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          className="text-3xl sm:text-4xl font-bold text-center mb-16"
+          style={{ fontFamily: "'Playfair Display', serif", color: '#fff' }}
+        >
+          Alt du trenger, ingenting du ikke trenger
+        </motion.h2>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={stagger}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {FEATURES.map((f) => (
+            <motion.div
+              key={f.title}
+              variants={fadeUp}
+              className="rounded-2xl p-8 transition-shadow hover:shadow-lg"
+              style={{ backgroundColor: 'rgba(255,255,255,0.12)' }}
+            >
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+              >
+                <f.icon size={24} className="text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-3" style={{ color: '#fff' }}>
+                {f.title}
+              </h3>
+              <p className="text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                {f.desc}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ── Trust ──
+const TRUST_ITEMS = [
+  { icon: Security, label: 'AES-256 kryptering' },
+  { icon: DataBase, label: 'Data lagret i EU' },
+  { icon: Locked, label: 'BankID (kommer)' },
+  { icon: FingerprintRecognition, label: '100% norsk' },
+];
+
+function Trust() {
+  return (
+    <section className="py-14" style={{ backgroundColor: BG }}>
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={stagger}
+          className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16"
+        >
+          {TRUST_ITEMS.map((t) => (
+            <motion.div key={t.label} variants={fadeUp} className="flex items-center gap-3">
+              <t.icon size={24} style={{ color: TEAL }} />
+              <span
+                className="text-sm font-semibold tracking-wide uppercase"
+                style={{ color: 'rgba(26,26,26,0.55)' }}
+              >
+                {t.label}
+              </span>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ── Social proof / who it's for ──
+const PERSONAS = [
+  {
+    emoji: '🏡',
+    title: 'Boligeiere',
+    desc: 'Forsikring, vedlikehold, oppussing og takst. Alt samlet for boligen din.',
+  },
+  {
+    emoji: '🚗',
+    title: 'Bil og båteiere',
+    desc: 'Servicebøker, forsikring, kjøpekontrakter. Slå opp bilen direkte fra Vegvesenet.',
+  },
+  {
+    emoji: '👨‍👩‍👧‍👦',
+    title: 'Familier',
+    desc: 'Del trygt med familien. Alle har tilgang til det viktige, uansett hva som skjer.',
+  },
+];
+
+function WhoItsFor() {
+  return (
+    <section className="py-24 md:py-32" style={{ backgroundColor: '#F4F3EF' }}>
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.h2
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          className="text-3xl sm:text-4xl font-bold text-center mb-16"
+          style={{ fontFamily: "'Playfair Display', serif", color: TEXT }}
+        >
+          Bygget for deg
+        </motion.h2>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={stagger}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
+          {PERSONAS.map((p) => (
+            <motion.div
+              key={p.title}
+              variants={fadeUp}
+              className="rounded-2xl p-8 border transition-shadow hover:shadow-md"
+              style={{ backgroundColor: '#fff', borderColor: 'rgba(0,0,0,0.06)' }}
+            >
+              <div className="text-4xl mb-4">{p.emoji}</div>
+              <h3 className="text-xl font-bold mb-2" style={{ color: TEXT }}>
+                {p.title}
+              </h3>
+              <p className="text-base leading-relaxed" style={{ color: 'rgba(26,26,26,0.65)' }}>
+                {p.desc}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ── Final CTA ──
+function FinalCTA() {
+  return (
+    <section className="py-24 md:py-32" style={{ backgroundColor: TEXT }}>
+      <div className="max-w-2xl mx-auto px-6 text-center">
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
+          <motion.h2
+            variants={fadeUp}
+            className="text-3xl sm:text-4xl font-bold mb-4"
+            style={{ fontFamily: "'Playfair Display', serif", color: '#fff' }}
+          >
+            Vær blant de første
+          </motion.h2>
+          <motion.p variants={fadeUp} className="text-lg mb-10" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            Få tidlig tilgang til Levd og vær med på å forme fremtidens livsplattform. Helt gratis i beta.
+          </motion.p>
+          <motion.div variants={fadeUp} className="max-w-md mx-auto">
+            <WaitlistForm variant="dark" />
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ── Footer ──
+function Footer() {
+  return (
+    <footer className="py-12" style={{ backgroundColor: BG }}>
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <span
+            className="text-xl font-bold"
+            style={{ fontFamily: "'Playfair Display', serif", color: TEXT }}
+          >
+            Levd
+          </span>
+          <a
+            href="mailto:hei@levd.ai"
+            className="text-sm transition-colors hover:underline"
+            style={{ color: 'rgba(26,26,26,0.5)' }}
+          >
+            Kontakt
+          </a>
+          <p className="text-xs" style={{ color: 'rgba(26,26,26,0.35)' }}>
+            © {new Date().getFullYear()} Levd.ai. Alle rettigheter reservert.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ── Main ──
+export default function App() {
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: BG, color: TEXT }}>
+      <Navbar />
+      <Hero />
+      <Problem />
+      <HowItWorks />
+      <Features />
+      <Trust />
+      <WhoItsFor />
+      <FinalCTA />
+      <Footer />
+    </div>
+  );
+}
