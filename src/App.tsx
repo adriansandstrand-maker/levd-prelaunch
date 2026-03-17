@@ -269,15 +269,15 @@ function Hero() {
 
 // ── Problem ──
 const PROBLEMS = [
-  'Hvor har vi forsikret huset?',
-  'Hvor ligger bilpapirene?',
-  'Når gikk servicen ut?',
-  'Hva dekker forsikringen egentlig?',
-  'Hvor la vi kjøpekontrakten?',
-  'Har familien tilgang om noe skjer?',
-  'Hva betyr egentlig det legen sa?',
-  'Hva burde jeg spurt legen om?',
-  'Hvor er prøvesvarene mine fra i fjor?',
+  'Hvilket selskap forsikret vi huset gjennom?',
+  'Hvor la jeg servicekvitteringen fra Toyota?',
+  'Når skal båten på neste EU-kontroll?',
+  'Dekker innboforsikringen vannskade på kjelleren?',
+  'Hvor er kjøpekontrakten på leiligheten?',
+  'Har familien tilgang til forsikringspapirene om noe skjer meg?',
+  'Hva mente legen med forhøyet CRP?',
+  'Hva burde jeg spurt legen om etter blodprøvene?',
+  'Hvor er MR-svaret fra i fjor?',
 ];
 
 function Problem() {
