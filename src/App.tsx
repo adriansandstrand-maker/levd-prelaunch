@@ -16,6 +16,7 @@ import {
   Home as HomeIcon,
   HealthCross,
   FingerprintRecognition,
+  SailboatCoastal,
 } from '@carbon/icons-react';
 
 // ── Design tokens (matches v2) ──
@@ -525,9 +526,15 @@ const PERSONAS = [
   },
   {
     icon: Car,
-    title: 'Bil og båteiere',
+    title: 'Bileiere',
     desc: 'Servicebøker, forsikring, kjøpekontrakter. Slå opp bilen direkte fra Vegvesenet.',
     color: TEAL,
+  },
+  {
+    icon: SailboatCoastal,
+    title: 'Båteiere',
+    desc: 'Motorlogg, forsikring, vedlikehold og sesongklargjøring. Alt for båten samlet.',
+    color: '#2563EB',
   },
   {
     icon: Collaborate,
@@ -556,7 +563,7 @@ function WhoItsFor() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={stagger}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {PERSONAS.map((p) => (
             <motion.div
