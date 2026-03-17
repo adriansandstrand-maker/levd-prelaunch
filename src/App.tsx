@@ -270,7 +270,7 @@ function Hero() {
 // ── Problem ──
 const PROBLEMS = [
   'Hvilket selskap forsikret vi huset gjennom?',
-  'Hvor la jeg servicekvitteringen fra Toyota?',
+  'Hvor la jeg servicekvitteringen fra bilen?',
   'Når skal båten på neste EU-kontroll?',
   'Dekker innboforsikringen vannskade på kjelleren?',
   'Hvor er kjøpekontrakten på leiligheten?',
