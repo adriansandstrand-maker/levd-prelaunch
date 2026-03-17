@@ -176,7 +176,7 @@ function Navbar() {
           className="text-2xl font-bold tracking-tight"
           style={{ fontFamily: "'Playfair Display', serif", color: TEXT }}
         >
-          Levd
+          Le<span style={{ color: CORAL }}>v</span>d
         </span>
         <a
           href="#signup"
@@ -800,7 +800,7 @@ function Footer() {
             className="text-xl font-bold"
             style={{ fontFamily: "'Playfair Display', serif", color: TEXT }}
           >
-            Levd
+            Le<span style={{ color: CORAL }}>v</span>d
           </span>
           <a
             href="mailto:hei@levd.ai"
