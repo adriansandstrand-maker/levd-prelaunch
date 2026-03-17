@@ -78,7 +78,7 @@ function WaitlistForm({ variant = 'dark' }: { variant?: 'dark' | 'light' }) {
         window.ttq?.track?.('SubmitForm');
       } else if (res.status === 409) {
         setStatus('error');
-        setErrorMsg('Du er allerede på listen! 🎉');
+        setErrorMsg('Du er allerede på listen!');
       } else {
         throw new Error('Signup failed');
       }
@@ -224,7 +224,7 @@ function Hero() {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-8"
               style={{ backgroundColor: `${CORAL}15`, color: CORAL, border: `1px solid ${CORAL}30` }}
             >
-              🚀 Snart lansering
+              Snart lansering
             </span>
           </motion.div>
 
@@ -518,19 +518,22 @@ function Trust() {
 // ── Social proof / who it's for ──
 const PERSONAS = [
   {
-    emoji: '🏡',
+    icon: HomeIcon,
     title: 'Boligeiere',
     desc: 'Forsikring, vedlikehold, oppussing og takst. Alt samlet for boligen din.',
+    color: CORAL,
   },
   {
-    emoji: '🚗',
+    icon: Car,
     title: 'Bil og båteiere',
     desc: 'Servicebøker, forsikring, kjøpekontrakter. Slå opp bilen direkte fra Vegvesenet.',
+    color: TEAL,
   },
   {
-    emoji: '👨‍👩‍👧‍👦',
+    icon: Collaborate,
     title: 'Familier',
     desc: 'Del trygt med familien. Alle har tilgang til det viktige, uansett hva som skjer.',
+    color: GOLDEN,
   },
 ];
 
@@ -562,7 +565,12 @@ function WhoItsFor() {
               className="rounded-2xl p-8 border transition-shadow hover:shadow-md"
               style={{ backgroundColor: '#fff', borderColor: 'rgba(0,0,0,0.06)' }}
             >
-              <div className="text-4xl mb-4">{p.emoji}</div>
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                style={{ backgroundColor: `${p.color}15` }}
+              >
+                <p.icon size={24} style={{ color: p.color }} />
+              </div>
               <h3 className="text-xl font-bold mb-2" style={{ color: TEXT }}>
                 {p.title}
               </h3>
