@@ -482,46 +482,129 @@ function Features() {
   );
 }
 
-// ── Health section ──
-function Health() {
+// ── Use cases section (tabbed: Bil, Bolig, Helse) ──
+const USE_CASES = [
+  {
+    key: 'bil',
+    label: 'Bil',
+    icon: Car,
+    color: CORAL,
+    heading: 'Servicehistorikk, samlet',
+    description: 'Aldri lur på når bilen sist var på service. Last opp kvitteringer og verkstedrapporter. Levd kobler alt til rett bil.',
+    card: {
+      title: 'Servicekvittering',
+      source: { label: 'Fra verkstedet', text: '«60 000 km service utført. Byttet bremseskiver foran, oljefilter, pollenfilter og bremsevæske. Neste service ved 80 000 km.»' },
+      result: { label: 'Levd oppsummerer', text: 'Stor service utført. Bremser og filter byttet. Neste service om 20 000 km. Levd varsler deg når det nærmer seg.' },
+      action: { label: 'Koblet til', text: 'Tesla Model 3 2022 — Service #3' },
+    },
+  },
+  {
+    key: 'bolig',
+    label: 'Bolig',
+    icon: HomeIcon,
+    color: TEAL,
+    heading: 'Alt om boligen, ett sted',
+    description: 'Takstrapporter, forsikringsbrev, oppussingskvitteringer. Levd samler alt og gir deg oversikt over boligens historikk.',
+    card: {
+      title: 'Takstrapport',
+      source: { label: 'Fra takstmann', text: '«Tilstandsgrad 2 på våtrom. Membran fra 2008, anbefalt utbedring innen 3-5 år. Elektrisk anlegg TG1. Estimert markedsverdi: 4 850 000 kr.»' },
+      result: { label: 'Levd oppsummerer', text: 'Badet bør oppgraderes i løpet av noen år. Resten av boligen er i god stand. Verdi estimert til 4,85 mill.' },
+      action: { label: 'Koblet til', text: 'Storgata 12B — Takst 2025' },
+    },
+  },
+  {
+    key: 'helse',
+    label: 'Helse',
+    icon: HealthCross,
+    color: GOLDEN,
+    heading: 'Helsen din, på ditt språk',
+    description: 'Legejournaler er fulle av faguttrykk. Levd oversetter det til vanlig norsk og foreslår spørsmål du bør stille legen.',
+    card: {
+      title: 'Prøvesvar forklart',
+      source: { label: 'Fra epikrisen', text: '«Pasienten har forhøyet CRP og leukocytose forenlig med akutt inflammatorisk respons.»' },
+      result: { label: 'Levd forklarer', text: 'Blodprøvene viser tegn på betennelse i kroppen. CRP og hvite blodceller er høyere enn normalt, noe som betyr at immunforsvaret jobber med noe.' },
+      action: { label: 'Spør legen din', text: '«Hva kan være årsaken til betennelsen, og trenger vi flere undersøkelser?»' },
+    },
+  },
+];
+
+function UseCases() {
+  const [active, setActive] = useState(0);
+  const c = USE_CASES[active];
+
   return (
     <section className="py-24 md:py-32" style={{ backgroundColor: '#F4F3EF' }}>
       <div className="max-w-6xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
-            <motion.h2
-              variants={fadeUp}
-              className="text-3xl sm:text-4xl font-bold mb-6"
+        <motion.h2
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          className="text-3xl sm:text-4xl font-bold text-center mb-4"
+          style={{ fontFamily: "'Playfair Display', serif", color: TEXT }}
+        >
+          Se det i praksis
+        </motion.h2>
+        <motion.p
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          className="text-center text-lg mb-12 max-w-lg mx-auto"
+          style={{ color: 'rgba(26,26,26,0.6)' }}
+        >
+          Last opp et dokument. Levd gjør resten.
+        </motion.p>
+
+        {/* Tabs */}
+        <div className="flex justify-center gap-2 mb-12">
+          {USE_CASES.map((uc, i) => (
+            <button
+              key={uc.key}
+              onClick={() => setActive(i)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all"
+              style={{
+                backgroundColor: active === i ? uc.color : 'transparent',
+                color: active === i ? '#fff' : 'rgba(26,26,26,0.6)',
+                border: active === i ? 'none' : '1px solid rgba(0,0,0,0.1)',
+              }}
+            >
+              <uc.icon size={18} />
+              {uc.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Content */}
+        <motion.div
+          key={c.key}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
+        >
+          <div>
+            <h3
+              className="text-2xl sm:text-3xl font-bold mb-4"
               style={{ fontFamily: "'Playfair Display', serif", color: TEXT }}
             >
-              Helsen din, på ditt språk
-            </motion.h2>
-            <motion.p
-              variants={fadeUp}
+              {c.heading}
+            </h3>
+            <p
               className="text-lg leading-relaxed mb-8"
               style={{ color: 'rgba(26,26,26,0.7)' }}
             >
-              Legejournaler er fulle av faguttrykk som gjør det vanskelig å forstå
-              hva som faktisk skjer med kroppen din. Levd oversetter det til vanlig norsk.
-            </motion.p>
-            <motion.div variants={fadeUp} className="space-y-5">
+              {c.description}
+            </p>
+            <div className="space-y-4">
               {[
-                {
-                  title: 'Oversatt til vanlig norsk',
-                  desc: 'Last opp epikriser, prøvesvar eller journalnotater. Levd forklarer hva alt betyr, uten fagsjargong.',
-                },
-                {
-                  title: 'Spørsmål du bør stille',
-                  desc: 'Basert på dokumentene dine foreslår Levd konkrete spørsmål du kan ta med til neste legetime.',
-                },
-                {
-                  title: 'Alt samlet over tid',
-                  desc: 'Se hele helsehistorikken din på ett sted. Prøvesvar, diagnoser, medisiner. Kronologisk og oversiktlig.',
-                },
+                { title: 'Last opp dokumentet', desc: 'Slipp inn filen. Levd leser og gjenkjenner innholdet automatisk.' },
+                { title: 'Automatisk sortert', desc: 'Dokumentet kobles til rett eiendel og kategori uten at du gjør noe.' },
+                { title: 'Alltid tilgjengelig', desc: 'Finn det igjen når du trenger det. Delt med familien om du vil.' },
               ].map((item) => (
                 <div key={item.title} className="flex gap-4">
                   <div className="flex-shrink-0 mt-1">
-                    <CheckmarkFilled size={20} style={{ color: TEAL }} />
+                    <CheckmarkFilled size={20} style={{ color: c.color }} />
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1" style={{ color: TEXT }}>{item.title}</h4>
@@ -529,56 +612,42 @@ function Health() {
                   </div>
                 </div>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="relative"
+          <div
+            className="rounded-2xl p-8 border"
+            style={{ backgroundColor: '#fff', borderColor: 'rgba(0,0,0,0.06)' }}
           >
-            <div
-              className="rounded-2xl p-8 border"
-              style={{ backgroundColor: '#fff', borderColor: 'rgba(0,0,0,0.06)' }}
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ backgroundColor: `${TEAL}15` }}
-                >
-                  <HealthCross size={20} style={{ color: TEAL }} />
-                </div>
-                <span className="font-semibold" style={{ color: TEXT }}>Prøvesvar forklart</span>
+            <div className="flex items-center gap-3 mb-6">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ backgroundColor: `${c.color}15` }}
+              >
+                <c.icon size={20} style={{ color: c.color }} />
               </div>
+              <span className="font-semibold" style={{ color: TEXT }}>{c.card.title}</span>
+            </div>
 
-              <div className="space-y-4">
-                <div className="rounded-xl p-4" style={{ backgroundColor: '#FEF2F2' }}>
-                  <p className="text-xs font-medium mb-1" style={{ color: 'rgba(26,26,26,0.5)' }}>Fra epikrisen</p>
-                  <p className="text-sm italic" style={{ color: TEXT }}>
-                    «Pasienten har forhøyet CRP og leukocytose forenlig med akutt inflammatorisk respons.»
-                  </p>
-                </div>
-                <div className="flex justify-center">
-                  <ArrowRight size={20} style={{ color: TEAL, transform: 'rotate(90deg)' }} />
-                </div>
-                <div className="rounded-xl p-4" style={{ backgroundColor: `${TEAL}10` }}>
-                  <p className="text-xs font-medium mb-1" style={{ color: TEAL }}>Levd forklarer</p>
-                  <p className="text-sm" style={{ color: TEXT }}>
-                    Blodprøvene viser tegn på betennelse i kroppen. CRP og hvite blodceller er høyere enn normalt, noe som betyr at immunforsvaret jobber med noe.
-                  </p>
-                </div>
-                <div className="rounded-xl p-4 border" style={{ borderColor: `${GOLDEN}40`, backgroundColor: `${GOLDEN}08` }}>
-                  <p className="text-xs font-medium mb-1" style={{ color: GOLDEN }}>Spør legen din</p>
-                  <p className="text-sm" style={{ color: TEXT }}>
-                    «Hva kan være årsaken til betennelsen, og trenger vi flere undersøkelser?»
-                  </p>
-                </div>
+            <div className="space-y-4">
+              <div className="rounded-xl p-4" style={{ backgroundColor: '#FEF2F2' }}>
+                <p className="text-xs font-medium mb-1" style={{ color: 'rgba(26,26,26,0.5)' }}>{c.card.source.label}</p>
+                <p className="text-sm italic" style={{ color: TEXT }}>{c.card.source.text}</p>
+              </div>
+              <div className="flex justify-center">
+                <ArrowRight size={20} style={{ color: c.color, transform: 'rotate(90deg)' }} />
+              </div>
+              <div className="rounded-xl p-4" style={{ backgroundColor: `${c.color}10` }}>
+                <p className="text-xs font-medium mb-1" style={{ color: c.color }}>{c.card.result.label}</p>
+                <p className="text-sm" style={{ color: TEXT }}>{c.card.result.text}</p>
+              </div>
+              <div className="rounded-xl p-4 border" style={{ borderColor: `${c.color}40`, backgroundColor: `${c.color}08` }}>
+                <p className="text-xs font-medium mb-1" style={{ color: c.color }}>{c.card.action.label}</p>
+                <p className="text-sm" style={{ color: TEXT }}>{c.card.action.text}</p>
               </div>
             </div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -758,7 +827,7 @@ export default function App() {
       <Problem />
       <HowItWorks />
       <Features />
-      <Health />
+      <UseCases />
       <Trust />
       <WhoItsFor />
       <FinalCTA />
