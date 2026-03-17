@@ -276,7 +276,7 @@ const PROBLEMS = [
   'Hvor la vi kjøpekontrakten?',
   'Har familien tilgang om noe skjer?',
   'Hva betyr egentlig det legen sa?',
-  'Hvilke spørsmål burde jeg stilt?',
+  'Hva burde jeg spurt legen om?',
   'Hvor er prøvesvarene mine fra i fjor?',
 ];
 
