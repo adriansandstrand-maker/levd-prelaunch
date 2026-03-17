@@ -11,10 +11,8 @@ import {
   ArrowRight,
   Collaborate,
   DocumentSecurity,
-  Analytics,
   Car,
   Home as HomeIcon,
-  HealthCross,
   FingerprintRecognition,
   SailboatCoastal,
 } from '@carbon/icons-react';
@@ -256,7 +254,7 @@ function Hero() {
             className="mt-8 text-lg leading-relaxed max-w-md"
             style={{ color: 'rgba(26,26,26,0.7)' }}
           >
-            Levd samler dokumenter, eiendeler og familiedata på ett trygt, kryptert sted. Med AI som gjør det enkelt.
+            Dump alle dokumentene dine. Levd sorterer, kategoriserer og oppretter eiendelene dine automatisk. Du slipper å gjøre noe.
           </motion.p>
 
           <motion.div variants={fadeUp} className="mt-10 max-w-md" id="signup">
@@ -321,14 +319,14 @@ function Problem() {
 const STEPS = [
   {
     icon: CloudUpload,
-    title: 'Last opp',
-    desc: 'Dra inn dokumenter, bilder og filer. AI leser, sorterer og kobler alt automatisk.',
+    title: 'Dump alt',
+    desc: 'Last opp alle dokumentene dine. Forsikringsbrev, kontrakter, kvitteringer, bilder. Bare slipp dem inn.',
     color: CORAL,
   },
   {
     icon: Catalog,
-    title: 'Få oversikt',
-    desc: 'Bil, båt, bolig, helse og mer. Alt samlet med historikk og dokumenter.',
+    title: 'Vi ordner resten',
+    desc: 'Levd leser, sorterer og kobler hvert dokument til rett eiendel. Bilen, båten, huset. Automatisk.',
     color: TEAL,
   },
   {
@@ -361,7 +359,7 @@ function HowItWorks() {
           className="text-center text-lg mb-16 max-w-md mx-auto"
           style={{ color: 'rgba(26,26,26,0.6)' }}
         >
-          Tre enkle steg til full kontroll.
+          Du laster opp. Vi tar oss av resten.
         </motion.p>
         <motion.div
           initial="hidden"
@@ -395,22 +393,28 @@ function HowItWorks() {
 // ── Features ──
 const FEATURES = [
   {
-    icon: DocumentSecurity,
-    title: 'Kryptert dokumenthvelv',
-    desc: 'AES-256 kryptering på klientsiden. Bare du har nøkkelen. Vi kan ikke lese filene dine.',
-    color: TEAL,
-  },
-  {
-    icon: Car,
-    title: 'Kjøretøy og eiendeler',
-    desc: 'Slå opp bilen direkte fra Vegvesenet. Båt, hus, hytte. Alt med dokumenter og historikk.',
+    icon: CloudUpload,
+    title: 'Bare last opp',
+    desc: 'Slipp inn 10 eller 100 dokumenter. Levd leser innholdet, gjenkjenner typen og sorterer alt for deg.',
     color: CORAL,
   },
   {
-    icon: Analytics,
-    title: 'AI som forstår',
-    desc: 'Last opp et dokument. Levd leser det, kategoriserer det og kobler det til rett eiendel.',
+    icon: Catalog,
+    title: 'Eiendeler opprettes automatisk',
+    desc: 'Laster du opp et forsikringsbrev for bilen? Levd oppretter bilen og kobler dokumentet. Uten at du løfter en finger.',
+    color: TEAL,
+  },
+  {
+    icon: DocumentSecurity,
+    title: 'Kryptert fra start',
+    desc: 'AES-256 kryptering på din enhet. Bare du har nøkkelen. Ikke engang vi kan lese filene dine.',
     color: GOLDEN,
+  },
+  {
+    icon: Car,
+    title: 'Vegvesen-oppslag',
+    desc: 'Skriv inn registreringsnummeret. Levd henter merke, modell og data direkte fra Vegvesenet.',
+    color: CORAL,
   },
   {
     icon: Collaborate,
@@ -419,15 +423,9 @@ const FEATURES = [
     color: TEAL,
   },
   {
-    icon: HomeIcon,
-    title: 'Bolig og eiendom',
-    desc: 'Samle alt om boligen. Forsikring, oppussing, takst, kontrakter. Ett sted.',
-    color: CORAL,
-  },
-  {
-    icon: HealthCross,
-    title: 'Helse og personlig',
-    desc: 'Helsejournal, vaksinasjoner, resepter. Alltid tilgjengelig når du trenger det.',
+    icon: SailboatCoastal,
+    title: 'Båt, bil, bolig',
+    desc: 'Hver eiendel får sin egen side med dokumenter, historikk og oversikt. Alt samlet.',
     color: GOLDEN,
   },
 ];
@@ -444,7 +442,7 @@ function Features() {
           className="text-3xl sm:text-4xl font-bold text-center mb-16"
           style={{ fontFamily: "'Playfair Display', serif", color: '#fff' }}
         >
-          Alt du trenger, ingenting du ikke trenger
+          Du dumper. Vi sorterer.
         </motion.h2>
         <motion.div
           initial="hidden"
