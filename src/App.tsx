@@ -13,6 +13,7 @@ import {
   DocumentSecurity,
   Car,
   Home as HomeIcon,
+  HealthCross,
   FingerprintRecognition,
   SailboatCoastal,
 } from '@carbon/icons-react';
@@ -274,6 +275,9 @@ const PROBLEMS = [
   'Hva dekker forsikringen egentlig?',
   'Hvor la vi kjøpekontrakten?',
   'Har familien tilgang om noe skjer?',
+  'Hva betyr egentlig det legen sa?',
+  'Hvilke spørsmål burde jeg stilt?',
+  'Hvor er prøvesvarene mine fra i fjor?',
 ];
 
 function Problem() {
@@ -428,6 +432,12 @@ const FEATURES = [
     desc: 'Hver eiendel får sin egen side med dokumenter, historikk og oversikt. Alt samlet.',
     color: GOLDEN,
   },
+  {
+    icon: HealthCross,
+    title: 'Forstå helsen din',
+    desc: 'Last opp prøvesvar og epikriser. Levd oversetter legespråk til vanlig norsk og foreslår spørsmål du bør stille.',
+    color: CORAL,
+  },
 ];
 
 function Features() {
@@ -473,6 +483,108 @@ function Features() {
             </motion.div>
           ))}
         </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ── Health section ──
+function Health() {
+  return (
+    <section className="py-24 md:py-32" style={{ backgroundColor: '#F4F3EF' }}>
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
+            <motion.h2
+              variants={fadeUp}
+              className="text-3xl sm:text-4xl font-bold mb-6"
+              style={{ fontFamily: "'Playfair Display', serif", color: TEXT }}
+            >
+              Helsen din, på ditt språk
+            </motion.h2>
+            <motion.p
+              variants={fadeUp}
+              className="text-lg leading-relaxed mb-8"
+              style={{ color: 'rgba(26,26,26,0.7)' }}
+            >
+              Legejournaler er fulle av faguttrykk som gjør det vanskelig å forstå
+              hva som faktisk skjer med kroppen din. Levd oversetter det til vanlig norsk.
+            </motion.p>
+            <motion.div variants={fadeUp} className="space-y-5">
+              {[
+                {
+                  title: 'Oversatt til vanlig norsk',
+                  desc: 'Last opp epikriser, prøvesvar eller journalnotater. Levd forklarer hva alt betyr, uten fagsjargong.',
+                },
+                {
+                  title: 'Spørsmål du bør stille',
+                  desc: 'Basert på dokumentene dine foreslår Levd konkrete spørsmål du kan ta med til neste legetime.',
+                },
+                {
+                  title: 'Alt samlet over tid',
+                  desc: 'Se hele helsehistorikken din på ett sted. Prøvesvar, diagnoser, medisiner. Kronologisk og oversiktlig.',
+                },
+              ].map((item) => (
+                <div key={item.title} className="flex gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <CheckmarkFilled size={20} style={{ color: TEAL }} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1" style={{ color: TEXT }}>{item.title}</h4>
+                    <p className="text-sm leading-relaxed" style={{ color: 'rgba(26,26,26,0.6)' }}>{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="relative"
+          >
+            <div
+              className="rounded-2xl p-8 border"
+              style={{ backgroundColor: '#fff', borderColor: 'rgba(0,0,0,0.06)' }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ backgroundColor: `${TEAL}15` }}
+                >
+                  <HealthCross size={20} style={{ color: TEAL }} />
+                </div>
+                <span className="font-semibold" style={{ color: TEXT }}>Prøvesvar forklart</span>
+              </div>
+
+              <div className="space-y-4">
+                <div className="rounded-xl p-4" style={{ backgroundColor: '#FEF2F2' }}>
+                  <p className="text-xs font-medium mb-1" style={{ color: 'rgba(26,26,26,0.5)' }}>Fra epikrisen</p>
+                  <p className="text-sm italic" style={{ color: TEXT }}>
+                    «Pasienten har forhøyet CRP og leukocytose forenlig med akutt inflammatorisk respons.»
+                  </p>
+                </div>
+                <div className="flex justify-center">
+                  <ArrowRight size={20} style={{ color: TEAL, transform: 'rotate(90deg)' }} />
+                </div>
+                <div className="rounded-xl p-4" style={{ backgroundColor: `${TEAL}10` }}>
+                  <p className="text-xs font-medium mb-1" style={{ color: TEAL }}>Levd forklarer</p>
+                  <p className="text-sm" style={{ color: TEXT }}>
+                    Blodprøvene viser tegn på betennelse i kroppen. CRP og hvite blodceller er høyere enn normalt, noe som betyr at immunforsvaret jobber med noe.
+                  </p>
+                </div>
+                <div className="rounded-xl p-4 border" style={{ borderColor: `${GOLDEN}40`, backgroundColor: `${GOLDEN}08` }}>
+                  <p className="text-xs font-medium mb-1" style={{ color: GOLDEN }}>Spør legen din</p>
+                  <p className="text-sm" style={{ color: TEXT }}>
+                    «Hva kan være årsaken til betennelsen, og trenger vi flere undersøkelser?»
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -652,6 +764,7 @@ export default function App() {
       <Problem />
       <HowItWorks />
       <Features />
+      <Health />
       <Trust />
       <WhoItsFor />
       <FinalCTA />
