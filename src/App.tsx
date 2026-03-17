@@ -415,9 +415,9 @@ const FEATURES = [
     color: GOLDEN,
   },
   {
-    icon: Car,
-    title: 'Vegvesen-oppslag',
-    desc: 'Skriv inn registreringsnummeret. Levd henter merke, modell og data direkte fra Vegvesenet.',
+    icon: HealthCross,
+    title: 'Forstå helsen din',
+    desc: 'Last opp prøvesvar og epikriser. Levd oversetter legespråk til vanlig norsk og foreslår spørsmål du bør stille.',
     color: CORAL,
   },
   {
@@ -431,12 +431,6 @@ const FEATURES = [
     title: 'Båt, bil, bolig',
     desc: 'Hver eiendel får sin egen side med dokumenter, historikk og oversikt. Alt samlet.',
     color: GOLDEN,
-  },
-  {
-    icon: HealthCross,
-    title: 'Forstå helsen din',
-    desc: 'Last opp prøvesvar og epikriser. Levd oversetter legespråk til vanlig norsk og foreslår spørsmål du bør stille.',
-    color: CORAL,
   },
 ];
 
